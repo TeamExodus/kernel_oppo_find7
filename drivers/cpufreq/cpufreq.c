@@ -324,10 +324,8 @@ void __cpufreq_notify_transition(struct cpufreq_policy *policy,
 		trace_cpu_frequency(freqs->new, freqs->cpu);
 		srcu_notifier_call_chain(&cpufreq_transition_notifier_list,
 				CPUFREQ_POSTCHANGE, freqs);
-		if (likely(policy) && likely(policy->cpu == freqs->cpu)) {
+		if (likely(policy) && likely(policy->cpu == freqs->cpu))
 			policy->cur = freqs->new;
-			sysfs_notify(&policy->kobj, NULL, "scaling_cur_freq");
-		}
 		break;
 	}
 }
@@ -1018,6 +1016,8 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
+
+	policy->util = 0;
 
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
 				     CPUFREQ_START, policy);
